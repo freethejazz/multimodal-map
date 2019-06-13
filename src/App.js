@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { Map, TileLayer } from 'react-leaflet'
 import annyang from 'annyang';
+import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import './App.css';
 
 class App extends Component {
   state = {
     center: [41.878099, -87.648116],
     zoom: 12,
+    geocoder: new OpenStreetMapProvider(),
   };
   updateViewport = (viewport) => {
     this.setState({
@@ -24,16 +26,29 @@ class App extends Component {
       zoom: this.state.zoom + 1
     });
   };
-  zoomOut = (...args) => {
+  zoomOut = () => {
     this.setState({
       zoom: this.state.zoom - 1
     });
   };
+  flyTo = (name) => {
+    console.log(name);
+    this.state.geocoder
+      .search({ query: name })
+      .then((result) => {
+        if(result.length) {
+          this.setState({
+            center: [parseFloat(result[0].y), parseFloat(result[0].x)]
+          });
+        }
+      });
+  };
   componentDidMount() {
     annyang.addCommands({
-      'in': this.zoomIn,
-      'out': this.zoomOut,
+      'zoom in': this.zoomIn,
+      'zoom out': this.zoomOut,
       'zoom level :level': {regexp: /^zoom level (\d+)/, callback: this.zoomTo},
+      'fly to *address': this.flyTo,
     });
     annyang.start();
   }

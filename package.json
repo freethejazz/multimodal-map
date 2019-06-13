@@ -5,6 +5,7 @@
   "dependencies": {
     "annyang": "^2.6.1",
     "leaflet": "^1.5.1",
+    "leaflet-geosearch": "^2.7.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-leaflet": "^2.3.0",
