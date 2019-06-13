@@ -3,12 +3,15 @@ import { Map, TileLayer } from 'react-leaflet'
 import annyang from 'annyang';
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import './App.css';
+import ReactPico from './pico/ReactPico';
+import FaceIndicator from './FaceIndicator';
 
 class App extends Component {
   state = {
     center: [41.878099, -87.648116],
     zoom: 12,
     geocoder: new OpenStreetMapProvider(),
+    face: null,
   };
   updateViewport = (viewport) => {
     this.setState({
@@ -44,6 +47,7 @@ class App extends Component {
       });
   };
   componentDidMount() {
+    // Enable voice commands
     annyang.addCommands({
       'zoom in': this.zoomIn,
       'zoom out': this.zoomOut,
@@ -56,11 +60,15 @@ class App extends Component {
     const {
       center,
       zoom,
+      face,
     } = this.state;
     return (
       <div className="App">
         <Map
-          style={{height: '100%', width: '100%'}}
+          style={{
+            height: '100%',
+            width: '100%',
+          }}
           center={center}
           zoom={zoom}
           onViewportChange={this.updateViewport}>
@@ -69,6 +77,8 @@ class App extends Component {
             attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
           />
         </Map>
+        <ReactPico onFaceFound={(face) => {this.setState({face})}} />
+        {face && <FaceIndicator x={face.totalX} y={face.totalY} />}
       </div>
     )
   }
